@@ -17,7 +17,8 @@ void printPeace(int value, int square);
 void move(int board[8][8]);
 void invalidMove();
 void validMove();
-
+void swap(int x1, int x2, int y1, int y2, int board[8][8]);
+int rules(int x1, int x2, int y1, int y2, int board[8][8]);
 
 int main() {
 	printf(clear);
@@ -58,9 +59,11 @@ void printBoard(int board[8][8]) {
 }
 
 void printPeace(int value, int square) {
+
 	setlocale(LC_CTYPE, "");
 	wchar_t peace;
 	char *fg;
+
 	switch (value) {
 		case 0:
 			peace=0x0020;
@@ -108,29 +111,33 @@ void printPeace(int value, int square) {
 
 void move(int board[8][8]) {
 	while (1) {
-		switch (turn%2==0) {
-			case 1:
+		switch (turn%2) {
+			case 0:
 				printf("===White's move!===\n");
 				break;
-			case 0:
+			case 1:
 				printf("===Black's move!===\n");
 				break;
 		}
-		printBoard(board);		
+
+		printBoard(board);
 		char move[5];
+
 		printf("Enter your move(e.g. e2-e4): ");
 		scanf("%s", move);
 		printf(clear);
+
 		if (move[0]>='a' && move[0]<='h' && move[1]>='1' && move[1]<='8' && move[3]>='a' && move[3]<='h' && move[4]>='1' && move[4]<='8' ) {
-			validMove();
 			int x1 = move[1]-'1';
 			int x2 = move[4]-'1';
 			int y1 = move[0]-'a';
 			int y2 = move[3]-'a';
-			board[x2][y2] = board[x1][y1];
-			board[x1][y1] = 0;
-			turn++;
-			validMove;
+			if(rules(x1, x2, y1, y2, board) == 0) {
+				swap(x1, x2, y1, y2, board);
+				turn++;
+			} else {
+				invalidMove();
+			}
 		} else {
 			invalidMove();
 		}
@@ -143,6 +150,43 @@ void invalidMove() {
 void validMove() {
 	printf(correctBG whiteFG "===+VALID MOVE!+===\n" defaultBG);
 }
-/*void rules(int board[8][8], int move) {
 
-}*/
+void swap(int x1, int x2, int y1, int y2, int board[8][8]) {
+	board[x2][y2] = board[x1][y1];
+	board[x1][y1] = 0;
+}
+
+int rules(int x1, int x2, int y1, int y2, int board[8][8]) {
+	int wb=turn%2;
+	int from=board[x1][y1];
+	int to=board[x2][y2];
+	printf("from: %d\n", from);
+	printf("to: %d\n", to);
+	printf("wb: %d\n", wb);
+	/* If not your turn */
+	if(wb==0 && from>=7) {
+		/* for white */
+		return 1;
+	} else if(wb!=0 && from<=6  && from!=0) {
+		/* for black */
+		return 1;
+	}
+	/* If square is empty */
+	if(from==0) {
+		return 1;
+	}
+	/* If same square */
+	if(from==to) {
+		return 1;
+	}
+	/* If same color */
+	if(wb==0 && to<=6 && to!=0) {
+		/* for white */
+		return 1;	
+	} else if(wb!=0 && to>=7) {
+		/* for black */
+		return 1;
+	}
+	return 0;
+	/* Pawns moves */
+}
