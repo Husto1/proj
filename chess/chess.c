@@ -163,6 +163,8 @@ int rules(int x1, int x2, int y1, int y2, int board[8][8]) {
 	printf("from: %d\n", from);
 	printf("to: %d\n", to);
 	printf("wb: %d\n", wb);
+	printf("from location:%d|%d\n",x1,y1);
+	printf("to location:%d|%d\n",x2,y2);
 	/* If not your turn */
 	if(wb==0 && from>=7) {
 		/* for white */
@@ -187,6 +189,27 @@ int rules(int x1, int x2, int y1, int y2, int board[8][8]) {
 		/* for black */
 		return 1;
 	}
+	
+	switch (from) {
+		/* Pawns moves */
+		case 1:
+			if(to==0 && x1==6 && x2==4 && y1==y2) {
+				break;
+			}
+			if(x1!=x2+1){
+				printf("shit");
+				return 1;
+			}
+			if(y1==y2 && to!=0) {
+				printf("fuck");
+				return 1;
+			}
+			if ((to>0 && x1==x2+1 && (y1==y2+1 || y1==y2-1))) {
+				break;
+			}
+			if (y1!=y2) {
+				return 1;
+			}
+	}
 	return 0;
-	/* Pawns moves */
 }
