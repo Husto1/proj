@@ -249,7 +249,7 @@ void promo(int x, int y, int board[8][8]) {
 		promo=6;
 	}
 	do {
-		printf(correctBG "===--Promotion--===\n" defaultBG);
+		printf(correctBG whiteFG "===--Promotion--===\n" defaultBG);
 		printBoard(board);
 		printf("1. Knight\n");
 		printf("2. Bishop\n");
@@ -277,6 +277,6 @@ void promo(int x, int y, int board[8][8]) {
 				invalidChoice = 1;
 				invalidMove();
 		}
-	} while (invalidChoice==1);
+	} while (invalidChoice);
 	printf(clear);
 }
