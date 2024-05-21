@@ -19,6 +19,7 @@ void invalidMove();
 void validMove();
 void swap(int x1, int x2, int y1, int y2, int board[8][8]);
 int rules(int x1, int x2, int y1, int y2, int board[8][8]);
+void promo(int x2, int y2, int board[8][8]);
 
 int main() {
 	printf(clear);
@@ -93,7 +94,7 @@ void printPeace(int value, int square) {
 			peace=0x265A;
 			break;
 		default:
-			printf("Error!");
+			printf("ERROR");
 	}
 
 	if (value<=6 && value!=0) {
@@ -103,9 +104,9 @@ void printPeace(int value, int square) {
 	}
 
 	if (square%2==0) {
-		printf(whiteBG "%s%lc ", fg, peace);
+		printf(whiteBG "%s%lc " defaultBG, fg, peace);
 	} else {
-		printf(blackBG "%s%lc ", fg, peace);
+		printf(blackBG "%s%lc " defaultBG, fg, peace);
 	}
 }
 
@@ -124,7 +125,7 @@ void move(int board[8][8]) {
 		char move[5];
 
 		printf("Enter your move(e.g. e2-e4): ");
-		scanf("%s", move);
+		scanf("%5s", move);
 		printf(clear);
 
 		if (move[0]>='a' && move[0]<='h' && move[1]>='1' && move[1]<='8' && move[3]>='a' && move[3]<='h' && move[4]>='1' && move[4]<='8' ) {
@@ -135,6 +136,7 @@ void move(int board[8][8]) {
 			if(rules(x1, x2, y1, y2, board) == 0) {
 				swap(x1, x2, y1, y2, board);
 				turn++;
+				validMove();
 			} else {
 				invalidMove();
 			}
@@ -193,23 +195,88 @@ int rules(int x1, int x2, int y1, int y2, int board[8][8]) {
 	switch (from) {
 		/* Pawns moves */
 		case 1:
-			if(to==0 && x1==6 && x2==4 && y1==y2) {
+			/* for white */
+			if(x2==0) {
+				promo(x1, y1, board);
+			}
+			if(to==0 && x1==6 && x2==4 && y1==y2 && board[5][y1]==0) {
 				break;
 			}
 			if(x1!=x2+1){
-				printf("shit");
 				return 1;
 			}
 			if(y1==y2 && to!=0) {
-				printf("fuck");
 				return 1;
 			}
-			if ((to>0 && x1==x2+1 && (y1==y2+1 || y1==y2-1))) {
+			if((to>0 && x1==x2+1 && (y1==y2+1 || y1==y2-1))) {
 				break;
 			}
-			if (y1!=y2) {
+			if(y1!=y2) {
 				return 1;
 			}
+			break;
+		case 7:
+			/* for black */
+			if(x2==7) {
+				promo(x1, y1, board);	
+			}
+			if(to==0 && x1==1 && x2==3 && y1==y2 && board[2][y1]==0) {
+				break;
+			}
+			if(x1!=x2-1) {
+				return 1;
+			}
+			if(y1==y2 && to!=0) {
+				return 1;
+			}		
+			if((to<7 && to!=0 && x1==x2-1 && (y1==y2-1 || y1==y2+1))) {
+				break;
+			}
+			if(y1!=y2) {
+				return 1;
+			}
+			break;
 	}
 	return 0;
+}
+
+void promo(int x, int y, int board[8][8]) {
+	printf(clear);
+	int invalidChoice;
+	int promo = 0;
+	char input[2];	
+	if(turn%2!=0) {
+		promo=6;
+	}
+	do {
+		printf(correctBG "===--Promotion--===\n" defaultBG);
+		printBoard(board);
+		printf("1. Knight\n");
+		printf("2. Bishop\n");
+		printf("3. Rook\n");
+		printf("4. Queen\n");
+		printf("Enter peace to promote(e.g. 1): ");
+		scanf("%1s", &input);
+		int digit = input[0]-'0';
+		invalidChoice = 0;
+		switch (digit) {
+			case 1:
+				board[x][y]=promo+3;
+				break;
+			case 2:
+				board[x][y]=promo+2;
+				break;
+			case 3:
+				board[x][y]=promo+4;
+				break;
+			case 4:
+				board[x][y]=promo+5;
+				break;
+			default:
+				printf(clear);
+				invalidChoice = 1;
+				invalidMove();
+		}
+	} while (invalidChoice==1);
+	printf(clear);
 }
