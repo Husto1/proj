@@ -122,7 +122,7 @@ void move(int board[8][8]) {
 		}
 
 		printBoard(board);
-		char move[5];
+		char move[6];
 
 		printf("Enter your move(e.g. e2-e4): ");
 		scanf("%5s", move);
@@ -196,9 +196,6 @@ int rules(int x1, int x2, int y1, int y2, int board[8][8]) {
 		/* Pawns moves */
 		case 1:
 			/* for white */
-			if(x2==0) {
-				promo(x1, y1, board);
-			}
 			if(to==0 && x1==6 && x2==4 && y1==y2 && board[5][y1]==0) {
 				break;
 			}
@@ -214,12 +211,12 @@ int rules(int x1, int x2, int y1, int y2, int board[8][8]) {
 			if(y1!=y2) {
 				return 1;
 			}
+			if(x2==0) {
+				promo(x1, y1, board);
+			}
 			break;
 		case 7:
 			/* for black */
-			if(x2==7) {
-				promo(x1, y1, board);	
-			}
 			if(to==0 && x1==1 && x2==3 && y1==y2 && board[2][y1]==0) {
 				break;
 			}
@@ -235,6 +232,9 @@ int rules(int x1, int x2, int y1, int y2, int board[8][8]) {
 			if(y1!=y2) {
 				return 1;
 			}
+			if(x2==7) {
+				promo(x1, y1, board);
+			}
 			break;
 	}
 	return 0;
@@ -244,7 +244,7 @@ void promo(int x, int y, int board[8][8]) {
 	printf(clear);
 	int invalidChoice;
 	int promo = 0;
-	char input[2];	
+	char input;	
 	if(turn%2!=0) {
 		promo=6;
 	}
@@ -256,8 +256,8 @@ void promo(int x, int y, int board[8][8]) {
 		printf("3. Rook\n");
 		printf("4. Queen\n");
 		printf("Enter peace to promote(e.g. 1): ");
-		scanf("%1s", &input);
-		int digit = input[0]-'0';
+		scanf("%c", &input);
+		int digit = input-'0';
 		invalidChoice = 0;
 		switch (digit) {
 			case 1:
